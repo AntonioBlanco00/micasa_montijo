@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Música Contento</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #e0f7fa;
+            position: relative; /* Necesario para posicionar elementos con z-index */
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px; /* Espacio ajustado para mantener la distancia del espectrograma */
+        }
+
+        h2 {
+            font-size: 1.5em; /* Tamaño del texto para el nombre de la canción */
+            margin-bottom: 20px; /* Espacio debajo del nombre de la canción */
+        }
+
+        /* Contenedor para los controles de audio */
+        .audio-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            position: relative; /* Necesario para asegurar que el canvas esté por encima */
+            z-index: 1; /* Asegura que los controles de audio estén debajo del canvas */
+        }
+
+        .volume-control {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-container {
+            width: 300px;
+            background-color: #ddd;
+            border-radius: 10px;
+            margin: 20px 0;
+            height: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #2196F3;
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        button {
+            width: 150px;
+            height: 40px;
+            font-size: 1.2em;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        button:hover {
+            background-color: #1976D2;
+            transform: scale(1.05);
+        }
+
+        input[type="range"] {
+            width: 150px;
+        }
+
+        /* Estilos para el espectrómetro */
+        canvas {
+            width: 400px;
+            height: 100px;
+            background-color: black;
+            margin: 20px 0; /* Margen superior e inferior */
+            border-radius: 10px;
+            position: relative; /* Mantener en el flujo normal de la página */
+            z-index: 2; /* Asegura que el canvas esté por encima de otros elementos */
+        }
+    </style>
+</head>
+<body>
+    <h1>Esta es la Página contento</h1>
+    <h2 id="song-title">Estás escuchando: Canción 1</h2> <!-- Elemento para el título de la canción -->
+
+    <!-- Canvas para el espectrómetro -->
+    <canvas id="audio-visualizer"></canvas>
+
+    <!-- Contenedor para los controles de audio -->
+    <div class="audio-controls">
+        <button onclick="prevSong()">Anterior</button>
+        <button onclick="playSong()">Play</button>
+        <button onclick="pauseSong()">Pausa</button>
+        <button onclick="nextSong()">Siguiente</button>
+    </div>
+
+    <!-- Controles de volumen -->
+    <div class="volume-control">
+        <label for="volume-slider">Volumen:</label>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1" oninput="changeVolume(this.value)">
+    </div>
+
+    <!-- Barra de progreso -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <!-- Botón para volver a la página principal -->
+    <button onclick="window.location.href='/'" style="margin-top: 20px;">Volver a la Página Principal</button>
+
+    <!-- Elemento audio para la reproducción de canciones -->
+    <audio id="audio-player" ontimeupdate="updateProgressBar()" onended="nextSong()"></audio>
+
+    <script>
+        // Lista de canciones con sus títulos
+        const songs = [
+            { src: 'static/song3.mp3', title: 'Canción de prueba 1' },
+            { src: 'static/song2.mp3', title: 'Canción de test 2' },
+            { src: 'static/song1.mp3', title: 'Canción pruebas 3' }
+        ];
+
+        let currentSongIndex = 0;
+        const audioPlayer = document.getElementById('audio-player');
+        const progressBar = document.getElementById('progress-bar');
+        const songTitleElement = document.getElementById('song-title'); // Elemento para mostrar el nombre de la canción
+
+        // Configurar el contexto de audio
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const analyser = audioContext.createAnalyser();
+        const source = audioContext.createMediaElementSource(audioPlayer);
+        source.connect(analyser);
+        analyser.connect(audioContext.destination);
+
+        analyser.fftSize = 256; // Tamaño del FFT (Fast Fourier Transform)
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        // Cargar la primera canción
+        audioPlayer.src = songs[currentSongIndex].src;
+        updateSongTitle(); // Actualizar el título al cargar la canción
+
+        // Función para reproducir la canción actual
+        function playSong() {
+            audioPlayer.play();
+            audioContext.resume().then(() => {
+                console.log('Playback resumed successfully');
+            });
+            draw(); // Iniciar el dibujo del espectrómetro
+        }
+
+        // Función para pausar la canción actual
+        function pauseSong() {
+            audioPlayer.pause();
+        }
+
+        // Función para ir a la siguiente canción
+        function nextSong() {
+            currentSongIndex = (currentSongIndex + 1) % songs.length; // Cambia al siguiente índice
+            audioPlayer.src = songs[currentSongIndex].src; // Cambia la fuente de audio
+            updateSongTitle(); // Actualizar el título de la canción
+            audioPlayer.play(); // Reproduce la nueva canción
+        }
+
+        // Función para ir a la canción anterior
+        function prevSong() {
+            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length; // Cambia al índice anterior
+            audioPlayer.src = songs[currentSongIndex].src; // Cambia la fuente de audio
+            updateSongTitle(); // Actualizar el título de la canción
+            audioPlayer.play(); // Reproduce la nueva canción
+        }
+
+        // Función para cambiar el volumen
+        function changeVolume(volume) {
+            audioPlayer.volume = volume;
+        }
+
+        // Función para actualizar la barra de progreso
+        function updateProgressBar() {
+            const percentage = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+            progressBar.style.width = percentage + '%';
+        }
+
+        // Función para actualizar el título de la canción
+        function updateSongTitle() {
+            songTitleElement.innerText = `Estás escuchando: ${songs[currentSongIndex].title}`; // Actualizar el texto con el título
+        }
+
+        // Función para dibujar el espectrómetro
+        function draw() {
+            requestAnimationFrame(draw); // Solicitar el próximo cuadro
+            analyser.getByteFrequencyData(dataArray); // Obtener los datos de frecuencia
+
+            const canvas = document.getElementById('audio-visualizer');
+            const canvasCtx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+
+            canvasCtx.fillStyle = 'rgba(0, 0, 0, 0.1)'; // Color de fondo
+            canvasCtx.fillRect(0, 0, width, height); // Limpiar el canvas
+
+            const barWidth = (width / bufferLength) * 2.5; // Ancho de las barras
+            let barHeight;
+            let x = 0;
+
+            for (let i = 0; i < bufferLength; i++) {
+                barHeight = dataArray[i]; // Altura de la barra
+                canvasCtx.fillStyle = `rgb(${barHeight + 100}, 50, 50)`; // Color de las barras
+                canvasCtx.fillRect(x, height - barHeight / 2, barWidth, barHeight / 2); // Dibujar la barra
+                x += barWidth + 1; // Mover la posición de la barra
+            }
+        }
+
+        // Reproduce la canción automáticamente cuando se carga la página
+        window.onload = function() {
+            playSong(); // Llama a la función para reproducir la canción
+        };
+    </script>
+</body>
+</html>

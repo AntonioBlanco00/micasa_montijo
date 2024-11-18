@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale: 1.0">
+    <title>Aplicación Montijo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            position: relative; /* Para posicionar el menú emergente */
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        button {
+            width: 200px;
+            height: 50px;
+            font-size: 1.5em;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+            transform: scale(1.1);
+        }
+
+        /* Estilos para el menú emergente */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            padding: 40px; /* Aumentar el padding para mayor tamaño */
+            display: none; /* Oculto por defecto */
+            z-index: 10; /* Asegura que esté por encima de otros elementos */
+            width: 450px; /* Ajustar el ancho del popup */
+            text-align: center; /* Centrar el texto en el popup */
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-button {
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+
+        .popup-content {
+            margin-top: 20px; /* Mayor espacio entre el encabezado y los botones */
+            display: flex;
+            justify-content: space-between; /* Colocar los botones a los lados */
+        }
+
+        .popup-content button {
+            background-color: #4CAF50;
+            font-size: 1em;
+            height: 100px; /* Aumentar la altura del botón para incluir la imagen */
+            width: 150px; /* Ancho fijo para los botones */
+            padding: 0; /* Remover padding */
+            position: relative; /* Para posicionar la imagen dentro del botón */
+            color: white; /* Color del texto del botón */
+            border: none; /* Sin borde para los botones */
+        }
+
+        .popup-content button img {
+            width: 60px; /* Ancho de la imagen */
+            height: 60px; /* Altura de la imagen */
+            position: absolute; /* Posicionar la imagen en el centro */
+            top: 10px; /* Espacio desde la parte superior */
+            left: 50%; /* Centro horizontal */
+            transform: translateX(-50%); /* Centrar horizontalmente la imagen */
+        }
+
+        .popup-content button span {
+            display: block; /* Hacer que el texto esté en su propia línea */
+            margin-top: 70px; /* Espacio para que el texto esté debajo de la imagen */
+            font-size: 1em; /* Tamaño del texto */
+        }
+    </style>
+</head>
+<body>
+    <h1>¿Cómo te sientes?</h1>
+    <div class="button-container">
+        <button onclick="showPopup(1)">Contento</button>
+        <button onclick="showPopup(2)">Nervioso</button>
+        <button onclick="showPopup(3)">Triste</button>
+        <button onclick="showPopup(4)">Enfadado</button>
+    </div>
+
+    <!-- Menú emergente -->
+    <div class="popup" id="popup">
+        <div class="popup-header">
+            <h2>Selecciona una opción</h2>
+            <button class="close-button" onclick="closePopup()">✖</button>
+        </div>
+        <div class="popup-content" id="popup-content">
+            <!-- Aquí se llenarán los botones dependiendo de la selección -->
+        </div>
+    </div>
+
+    <script>
+        let currentPage; // Variable para almacenar la página actual
+
+        function showPopup(page) {
+            currentPage = page; // Almacenar la página actual
+            const popupContent = document.getElementById('popup-content');
+            popupContent.innerHTML = `
+                <button onclick="navigateTo('video${page}')">
+                    <img src="static/video.png" alt="Ver Video"> <!-- Cambia la URL de la imagen -->
+                    <span>Ver Video</span>
+                </button>
+                <button onclick="navigateTo('music${page}')">
+                    <img src="static/musica.png" alt="Escuchar Música"> <!-- Cambia la URL de la imagen -->
+                    <span>Escuchar Música</span>
+                </button>
+            `; // Llenar el contenido del menú emergente
+            document.getElementById('popup').style.display = 'block'; // Muestra el menú emergente
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none'; // Oculta el menú emergente
+        }
+
+        function navigateTo(page) {
+            window.location.href = page; // Navega a la página seleccionada
+        }
+    </script>
+</body>
+</html>

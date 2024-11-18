@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vídeo Contento</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #e0f7fa;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        .video-container {
+            width: 600px;
+            height: 400px;
+            overflow: hidden;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .audio-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            width: 150px;
+            height: 40px;
+            font-size: 1.2em;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        button:hover {
+            background-color: #1976D2;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <h1>Página de Reproducción de Video</h1>
+    <h2 id="video-title">Video 1</h2> <!-- Título del video -->
+
+    <!-- Contenedor para el video -->
+    <div class="video-container">
+        <video id="video-player" width="100%" height="100%" autoplay muted controls oncanplay="setVolume()"> <!-- autoplay y muted activados -->
+            <source src="static/video1.mp4" type="video/mp4">
+            Tu navegador no soporta el elemento video.
+        </video>
+    </div>
+
+    <div class="audio-controls">
+        <button onclick="prevVideo()">Anterior</button>
+        <button onclick="playVideo()">Reproducir</button>
+        <button onclick="pauseVideo()">Pausa</button>
+        <button onclick="nextVideo()">Siguiente</button>
+    </div>
+
+    <button onclick="window.location.href='/'" style="margin-top: 20px;">Volver a la Página Principal</button>
+
+    <script>
+        // Lista de videos con sus títulos
+        const videos = [
+            { src: 'static/video3.mp4', title: 'Video de prueba' },
+            { src: 'static/video2.mp4', title: 'Video 2' },
+            { src: 'static/video1.mp4', title: 'Video 3' }
+        ];
+
+        let currentVideoIndex = 0;
+        const videoPlayer = document.getElementById('video-player');
+        const videoTitleElement = document.getElementById('video-title');
+
+        // Función que se ejecuta cuando el video puede comenzar a reproducirse
+        function setVolume() {
+            videoPlayer.muted = false; // Quitar mute
+            videoPlayer.volume = 0.5; // Establecer volumen al 50%
+        }
+
+        // Cargar el primer video
+        loadVideo(currentVideoIndex);
+
+        function loadVideo(index) {
+            videoPlayer.src = videos[index].src;
+            updateVideoTitle();
+        }
+
+        function playVideo() {
+            videoPlayer.play().catch(error => {
+                console.error('Error al intentar reproducir el video:', error);
+            });
+        }
+
+        function pauseVideo() {
+            videoPlayer.pause();
+        }
+
+        function nextVideo() {
+            currentVideoIndex = (currentVideoIndex + 1) % videos.length;
+            loadVideo(currentVideoIndex);
+            playVideo();
+        }
+
+        function prevVideo() {
+            currentVideoIndex = (currentVideoIndex - 1 + videos.length) % videos.length;
+            loadVideo(currentVideoIndex);
+            playVideo();
+        }
+
+        function updateVideoTitle() {
+            videoTitleElement.innerText = videos[currentVideoIndex].title;
+        }
+    </script>
+</body>
+</html>
