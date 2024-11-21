@@ -4,15 +4,15 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('emoticonos.html')
 
-@app.route('/music1')
+@app.route('/wakeup')
 def page1():
-    return render_template('contento_music.html')
+    return render_template('wake_up.html')
 
-@app.route('/video1')
+@app.route('/message_wakeup')
 def page2():
-    return render_template('contento_video.html')
+    return render_template('message_wakeup.html')
 
 @app.route('/page2')
 def page3():

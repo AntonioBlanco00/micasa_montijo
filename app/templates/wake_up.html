@@ -1,0 +1,207 @@
+// LO QUE HAY COMENTADO ES EL TUYO ANTIGUO, POR SI NO TE GUSTA EL ESPECTOGRAMA QUE ES POSIBLE
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="es">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Audio Automático Programado</title>-->
+<!--    <style>-->
+<!--        body {-->
+<!--            font-family: Arial, sans-serif;-->
+<!--            text-align: center;-->
+<!--            padding: 20px;-->
+<!--        }-->
+<!--        h1 {-->
+<!--            color: chocolate;-->
+<!--        }-->
+<!--        #mensaje {-->
+<!--            margin-top: 20px;-->
+<!--            display: none;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <h1>Reproductor Automático</h1>-->
+<!--    <p>La música se reproducirá automáticamente.</p>-->
+<!--    <audio id="audio" src="static/song3.mp3"></audio>-->
+<!--    <div id="mensaje">-->
+<!--        <h2>¡El tiempo ha pasado y aquí está tu mensaje!</h2>-->
+<!--    </div>-->
+
+<!--    <script>-->
+<!--        const audio = document.getElementById("audio");-->
+<!--        const mensaje = document.getElementById("mensaje");-->
+
+<!--        // Función para iniciar el audio inmediatamente al cargar la página-->
+<!--        function iniciarAudio() {-->
+<!--            // Reproducir audio en cuanto la página cargue-->
+<!--            audio.play()-->
+<!--                .then(() => {-->
+<!--                    console.log("Audio iniciado automáticamente.");-->
+
+<!--                    // Detener el audio después del tiempo especificado (12 segundos)-->
+<!--                    setTimeout(() => {-->
+<!--                        audio.pause();-->
+<!--                        audio.currentTime = 0; // Reiniciar el audio al principio-->
+<!--                        console.log("Audio detenido después de 12 segundos.");-->
+<!--                    }, 12000); // Duración del audio-->
+
+<!--                    // Mostrar el mensaje después de detener el audio-->
+<!--                    setTimeout(() => {-->
+<!--                        mensaje.style.display = "block";-->
+<!--                        console.log("Mensaje mostrado");-->
+
+<!--                        // Redirigir automáticamente después del mensaje-->
+<!--                        setTimeout(() => {-->
+<!--                            window.location.href = "message_wakeup"; // Redirige después del mensaje-->
+<!--                        }, 5000); // Espera 5 segundos antes de redirigir-->
+<!--                    }, 12000 + 5000); // Tiempo total hasta redirigir-->
+<!--                })-->
+<!--                .catch((error) => {-->
+<!--                    console.error("Error al reproducir el audio:", error);-->
+<!--                });-->
+<!--        }-->
+
+<!--        // Asegurarnos de que el audio se inicie cuando la página haya cargado completamente-->
+<!--        window.onload = () => {-->
+<!--            iniciarAudio();-->
+<!--        };-->
+<!--    </script>-->
+<!--</body>-->
+<!--</html>-->
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Automático Programado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: chocolate;
+        }
+        #mensaje {
+            margin-top: 20px;
+            display: none;
+        }
+        canvas {
+            display: block;
+            margin: 20px auto;
+            border: 1px solid black;
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Reproductor Automático</h1>
+    <p>La música se reproducirá automáticamente.</p>
+    <audio id="audio" src="static/song3.mp3"></audio>
+    <div id="mensaje">
+        <h2>¡El tiempo ha pasado y aquí está tu mensaje!</h2>
+    </div>
+
+    <!-- Canvas para el espectrograma -->
+    <canvas id="spectrogram" width="600" height="300"></canvas>
+
+    <script>
+        const audio = document.getElementById("audio");
+        const mensaje = document.getElementById("mensaje");
+        const canvas = document.getElementById("spectrogram");
+        const ctx = canvas.getContext("2d");
+
+        // Configuración de la Web Audio API
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const analyser = audioContext.createAnalyser();
+        analyser.fftSize = 2048; // Tamaño de la FFT (Fast Fourier Transform)
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        // Conectar el audio al contexto de análisis
+        const source = audioContext.createMediaElementSource(audio);
+        source.connect(analyser);
+        analyser.connect(audioContext.destination);
+
+        // Función para iniciar el audio y el espectrograma
+        function iniciarAudio() {
+            // Reproducir el audio cuando la página cargue
+            audio.play()
+                .then(() => {
+                    console.log("Audio iniciado automáticamente.");
+
+                    // Comenzar el espectrograma
+                    visualizarEspectrograma();
+
+                    // Detener el audio después de 12 segundos
+                    setTimeout(() => {
+                        audio.pause();
+                        audio.currentTime = 0; // Reiniciar el audio al principio
+                        console.log("Audio detenido después de 12 segundos.");
+                    }, 12000); // Duración del audio
+
+                    // Mostrar el mensaje después de detener el audio
+                    setTimeout(() => {
+                        mensaje.style.display = "block";
+                        console.log("Mensaje mostrado");
+
+                        // Redirigir automáticamente después del mensaje
+                        setTimeout(() => {
+                            window.location.href = "message_wakeup"; // Redirige después del mensaje
+                        }, 5000); // Espera 5 segundos antes de redirigir
+                    }, 12000 + 5000); // Tiempo total hasta redirigir
+                })
+                .catch((error) => {
+                    console.error("Error al reproducir el audio:", error);
+                });
+        }
+
+        // Función para visualizar el espectrograma
+        function visualizarEspectrograma() {
+            // Función de actualización para visualizar el espectrograma en tiempo real
+            function actualizarEspectrograma() {
+                analyser.getByteFrequencyData(dataArray);
+
+                // Limpiar el canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Dibujar el espectrograma
+                const barWidth = (canvas.width / bufferLength) * 2.5;
+                let x = 0;
+                for(let i = 0; i < bufferLength; i++) {
+                    const barHeight = dataArray[i];
+
+                    // Elegir un color basado en la altura de la barra
+                    const red = barHeight + 100;
+                    const green = barHeight / 2;
+                    const blue = barHeight / 4;
+                    ctx.fillStyle = `rgb(${red},${green},${blue})`;
+
+                    // Dibujar la barra en el canvas
+                    ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                    x += barWidth + 1;
+                }
+
+                // Llamar a la función de actualización en el siguiente frame
+                requestAnimationFrame(actualizarEspectrograma);
+            }
+
+            actualizarEspectrograma();
+        }
+
+        // Asegurarse de que el audio y el espectrograma se inicien cuando la página haya cargado
+        window.onload = () => {
+            iniciarAudio();
+        };
+    </script>
+</body>
+</html>
+

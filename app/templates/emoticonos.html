@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Cómo te sientes hoy?</title>
+    <style>
+        /* Estilos base (sin cambios) */
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f8ff;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            color: #333;
+            margin-top: 70px;
+            margin-bottom: 100px;
+            font-size: 3rem;
+        }
+        .emoticons {
+            display: flex;
+            gap: 70px;
+        }
+        .emoticons button {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .emoticons button img {
+            width: 300px;
+            height: 300px;
+        }
+        .emoticons button:hover img {
+            transform: scale(1.2);
+        }
+        .menu {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            width: 300px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Alinear elementos al inicio */
+            gap: 10px; /* Espaciado consistente entre botones */
+        }
+        .menu button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .menu button:hover {
+            background-color: #0056b3;
+        }
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        #closeMenuButton {
+            background-color: #dc3545; /* Rojo */
+            color: white;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        #closeMenuButton:hover {
+            background-color: #c82333; /* Rojo más oscuro */
+        }
+        .audio-controls {
+            display: flex; /* Ahora es visible desde el inicio */
+            margin-top: 20px;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .audio-controls button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 40px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 0 5px;
+        }
+
+        .audio-controls button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1>¿Cómo te sientes hoy, Marcos?</h1>
+    <div class="emoticons">
+        <button onclick="mostrarMenu('menu-triste')">
+            <img src="static/1.png" alt="Triste" title="Triste">
+        </button>
+        <button onclick="mostrarMenu('menu-neutral')">
+            <img src="static/3.png" alt="Neutral" title="Neutral">
+        </button>
+        <button onclick="mostrarMenu('menu-contento')">
+            <img src="static/5.png" alt="Feliz" title="Feliz">
+        </button>
+    </div>
+    <!-- Fondo oscuro -->
+    <div id="overlay" onclick="cerrarTodosLosMenus()"></div>
+
+    <!-- Menús emergentes -->
+    <div id="menu-triste" class="menu">
+        <button onclick="reproducirAudio('static/song1.mp3')">Mensaje 1: No estás solo.</button>
+        <button onclick="reproducirAudio('static/song2.mp3')">Mensaje 2: Tómate tu tiempo.</button>
+        <button onclick="reproducirAudio('static/song3.mp3')">Mensaje 3: Mañana será mejor.</button>
+        <div class="audio-controls">
+            <button onclick="toggleAudio()">Pausar</button>
+        </div>
+        <button onclick="cerrarTodosLosMenus()">Cerrar menú</button>
+    </div>
+
+    <div id="menu-neutral" class="menu">
+        <button onclick="reproducirAudio('static/song1.mp3')">Mensaje 1: Todo está bien.</button>
+        <button onclick="reproducirAudio('static/song2.mp3')">Mensaje 2: Tómate un respiro.</button>
+        <button onclick="reproducirAudio('static/song3.mp3')">Mensaje 3: Relájate y sigue adelante.</button>
+        <div class="audio-controls">
+            <button onclick="toggleAudio()">Pausar</button>
+        </div>
+        <button onclick="cerrarTodosLosMenus()">Cerrar menú</button>
+    </div>
+
+    <div id="menu-contento" class="menu">
+        <button onclick="reproducirAudio('static/song1.mp3')">Mensaje 1: ¡Qué alegría!</button>
+        <button onclick="reproducirAudio('static/song2.mp3')">Mensaje 2: ¡Eres increíble!</button>
+        <button onclick="reproducirAudio('static/song3.mp3')">Mensaje 3: ¡Sigue sonriendo!</button>
+        <div class="audio-controls">
+            <button onclick="toggleAudio()">Pausar</button>
+        </div>
+        <button onclick="cerrarTodosLosMenus()">Cerrar menú</button>
+    </div>
+
+<!--    <div id="audio-controls">-->
+<!--        <button id="pauseResumeButton" onclick="toggleAudio()">Pausar</button>-->
+<!--    </div>-->
+
+
+    <script>
+        let audio = null;
+
+        function mostrarMenu(menuId) {
+            cerrarTodosLosMenus();
+            document.getElementById(menuId).style.display = 'flex';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function reproducirAudio(audioFile) {
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+            }
+            audio = new Audio(audioFile);
+            audio.play();
+
+            // Cambiar el texto del botón de los controles al iniciar audio
+            document.querySelectorAll('.audio-controls button').forEach(btn => {
+                btn.textContent = 'Pausar';
+            });
+        }
+
+        function toggleAudio() {
+            if (audio) {
+                if (audio.paused) {
+                    audio.play();
+                    actualizarBoton('Pausar');
+                } else {
+                    audio.pause();
+                    actualizarBoton('Reanudar');
+                }
+            }
+        }
+
+        function actualizarBoton(texto) {
+            document.querySelectorAll('.audio-controls button').forEach(btn => {
+                btn.textContent = texto;
+            });
+        }
+
+        function cerrarTodosLosMenus() {
+            document.querySelectorAll('.menu').forEach(menu => menu.style.display = 'none');
+            document.getElementById('overlay').style.display = 'none';
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+                audio = null;
+                actualizarBoton('Reproducir'); // Reiniciar el texto del botón al cerrar
+            }
+        }
+         // Redirección automática a una hora programada
+        const horaProgramada = "12:55"; // Cambiar a la hora deseada (formato HH:mm)
+        function redirigirSiEsHora() {
+            const ahora = new Date();
+            const horas = String(ahora.getHours()).padStart(2, "0");
+            const minutos = String(ahora.getMinutes()).padStart(2, "0");
+            const horaActual = `${horas}:${minutos}`;
+
+            if (horaActual === horaProgramada) {
+                window.location.href = "wakeup"; // Cambia "wake_up.html" por la URL real
+            }
+        }
+
+        // Comprobar la hora cada 10 segundos
+        setInterval(redirigirSiEsHora, 10000);
+
+               // Asegura que todo esté oculto al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            cerrarTodosLosMenus();
+        });
+    </script>
+</body>
+</html>

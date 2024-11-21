@@ -1,163 +1,379 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale: 1.0">
-    <title>Aplicación Montijo</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-            position: relative; /* Para posicionar el menú emergente */
-        }
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale: 1.0">-->
+<!--    <title>Aplicación Montijo</title>-->
+<!--    <style>-->
+<!--        body {-->
+<!--            font-family: Arial, sans-serif;-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--            justify-content: center;-->
+<!--            align-items: center;-->
+<!--            height: 100vh;-->
+<!--            margin: 0;-->
+<!--            background-color: #f0f0f0;-->
+<!--            position: relative; /* Para posicionar el menú emergente */-->
+<!--        }-->
 
-        h1 {
-            font-size: 3em;
-            margin-bottom: 20px;
-        }
+<!--        h1 {-->
+<!--            font-size: 3em;-->
+<!--            margin-bottom: 20px;-->
+<!--        }-->
 
-        .button-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+<!--        .button-container {-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--            gap: 20px;-->
+<!--        }-->
 
-        button {
-            width: 200px;
-            height: 50px;
-            font-size: 1.5em;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.3s;
-        }
+<!--        button {-->
+<!--            width: 200px;-->
+<!--            height: 50px;-->
+<!--            font-size: 1.5em;-->
+<!--            background-color: #4CAF50;-->
+<!--            color: white;-->
+<!--            border: none;-->
+<!--            border-radius: 10px;-->
+<!--            cursor: pointer;-->
+<!--            transition: background-color 0.3s, transform 0.3s;-->
+<!--        }-->
 
-        button:hover {
-            background-color: #45a049;
-            transform: scale(1.1);
-        }
+<!--        button:hover {-->
+<!--            background-color: #45a049;-->
+<!--            transform: scale(1.1);-->
+<!--        }-->
 
-        /* Estilos para el menú emergente */
-        .popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            border: 2px solid #4CAF50;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            padding: 40px; /* Aumentar el padding para mayor tamaño */
-            display: none; /* Oculto por defecto */
-            z-index: 10; /* Asegura que esté por encima de otros elementos */
-            width: 450px; /* Ajustar el ancho del popup */
-            text-align: center; /* Centrar el texto en el popup */
-        }
+<!--        /* Estilos para el menú emergente */-->
+<!--        .popup {-->
+<!--            position: fixed;-->
+<!--            top: 50%;-->
+<!--            left: 50%;-->
+<!--            transform: translate(-50%, -50%);-->
+<!--            background-color: white;-->
+<!--            border: 2px solid #4CAF50;-->
+<!--            border-radius: 10px;-->
+<!--            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);-->
+<!--            padding: 40px; /* Aumentar el padding para mayor tamaño */-->
+<!--            display: none; /* Oculto por defecto */-->
+<!--            z-index: 10; /* Asegura que esté por encima de otros elementos */-->
+<!--            width: 450px; /* Ajustar el ancho del popup */-->
+<!--            text-align: center; /* Centrar el texto en el popup */-->
+<!--        }-->
 
-        .popup-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+<!--        .popup-header {-->
+<!--            display: flex;-->
+<!--            justify-content: space-between;-->
+<!--            align-items: center;-->
+<!--        }-->
 
-        .close-button {
-            background-color: red;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-            font-size: 1.2em;
-        }
+<!--        .close-button {-->
+<!--            background-color: red;-->
+<!--            color: white;-->
+<!--            border: none;-->
+<!--            border-radius: 50%;-->
+<!--            width: 30px;-->
+<!--            height: 30px;-->
+<!--            cursor: pointer;-->
+<!--            font-size: 1.2em;-->
+<!--        }-->
 
-        .popup-content {
-            margin-top: 20px; /* Mayor espacio entre el encabezado y los botones */
-            display: flex;
-            justify-content: space-between; /* Colocar los botones a los lados */
-        }
+<!--        .popup-content {-->
+<!--            margin-top: 20px; /* Mayor espacio entre el encabezado y los botones */-->
+<!--            display: flex;-->
+<!--            justify-content: space-between; /* Colocar los botones a los lados */-->
+<!--        }-->
 
-        .popup-content button {
-            background-color: #4CAF50;
-            font-size: 1em;
-            height: 100px; /* Aumentar la altura del botón para incluir la imagen */
-            width: 150px; /* Ancho fijo para los botones */
-            padding: 0; /* Remover padding */
-            position: relative; /* Para posicionar la imagen dentro del botón */
-            color: white; /* Color del texto del botón */
-            border: none; /* Sin borde para los botones */
-        }
+<!--        .popup-content button {-->
+<!--            background-color: #4CAF50;-->
+<!--            font-size: 1em;-->
+<!--            height: 100px; /* Aumentar la altura del botón para incluir la imagen */-->
+<!--            width: 150px; /* Ancho fijo para los botones */-->
+<!--            padding: 0; /* Remover padding */-->
+<!--            position: relative; /* Para posicionar la imagen dentro del botón */-->
+<!--            color: white; /* Color del texto del botón */-->
+<!--            border: none; /* Sin borde para los botones */-->
+<!--        }-->
 
-        .popup-content button img {
-            width: 60px; /* Ancho de la imagen */
-            height: 60px; /* Altura de la imagen */
-            position: absolute; /* Posicionar la imagen en el centro */
-            top: 10px; /* Espacio desde la parte superior */
-            left: 50%; /* Centro horizontal */
-            transform: translateX(-50%); /* Centrar horizontalmente la imagen */
-        }
+<!--        .popup-content button img {-->
+<!--            width: 60px; /* Ancho de la imagen */-->
+<!--            height: 60px; /* Altura de la imagen */-->
+<!--            position: absolute; /* Posicionar la imagen en el centro */-->
+<!--            top: 10px; /* Espacio desde la parte superior */-->
+<!--            left: 50%; /* Centro horizontal */-->
+<!--            transform: translateX(-50%); /* Centrar horizontalmente la imagen */-->
+<!--        }-->
 
-        .popup-content button span {
-            display: block; /* Hacer que el texto esté en su propia línea */
-            margin-top: 70px; /* Espacio para que el texto esté debajo de la imagen */
-            font-size: 1em; /* Tamaño del texto */
-        }
-    </style>
-</head>
-<body>
-    <h1>¿Cómo te sientes?</h1>
-    <div class="button-container">
-        <button onclick="showPopup(1)">Contento</button>
-        <button onclick="showPopup(2)">Nervioso</button>
-        <button onclick="showPopup(3)">Triste</button>
-        <button onclick="showPopup(4)">Enfadado</button>
-    </div>
+<!--        .popup-content button span {-->
+<!--            display: block; /* Hacer que el texto esté en su propia línea */-->
+<!--            margin-top: 70px; /* Espacio para que el texto esté debajo de la imagen */-->
+<!--            font-size: 1em; /* Tamaño del texto */-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <h1>¿Cómo te sientes?</h1>-->
+<!--    <div class="button-container">-->
+<!--        <button onclick="showPopup(1)">Contento</button>-->
+<!--        <button onclick="showPopup(2)">Nervioso</button>-->
+<!--        <button onclick="showPopup(3)">Triste</button>-->
+<!--        <button onclick="showPopup(4)">Enfadado</button>-->
+<!--    </div>-->
 
-    <!-- Menú emergente -->
-    <div class="popup" id="popup">
-        <div class="popup-header">
-            <h2>Selecciona una opción</h2>
-            <button class="close-button" onclick="closePopup()">✖</button>
-        </div>
-        <div class="popup-content" id="popup-content">
-            <!-- Aquí se llenarán los botones dependiendo de la selección -->
-        </div>
-    </div>
+<!--    &lt;!&ndash; Menú emergente &ndash;&gt;-->
+<!--    <div class="popup" id="popup">-->
+<!--        <div class="popup-header">-->
+<!--            <h2>Selecciona una opción</h2>-->
+<!--            <button class="close-button" onclick="closePopup()">✖</button>-->
+<!--        </div>-->
+<!--        <div class="popup-content" id="popup-content">-->
+<!--            &lt;!&ndash; Aquí se llenarán los botones dependiendo de la selección &ndash;&gt;-->
+<!--        </div>-->
+<!--    </div>-->
 
-    <script>
-        let currentPage; // Variable para almacenar la página actual
+<!--    <script>-->
+<!--        let currentPage; // Variable para almacenar la página actual-->
 
-        function showPopup(page) {
-            currentPage = page; // Almacenar la página actual
-            const popupContent = document.getElementById('popup-content');
-            popupContent.innerHTML = `
-                <button onclick="navigateTo('video${page}')">
-                    <img src="static/video.png" alt="Ver Video"> <!-- Cambia la URL de la imagen -->
-                    <span>Ver Video</span>
-                </button>
-                <button onclick="navigateTo('music${page}')">
-                    <img src="static/musica.png" alt="Escuchar Música"> <!-- Cambia la URL de la imagen -->
-                    <span>Escuchar Música</span>
-                </button>
-            `; // Llenar el contenido del menú emergente
-            document.getElementById('popup').style.display = 'block'; // Muestra el menú emergente
-        }
+<!--        function showPopup(page) {-->
+<!--            currentPage = page; // Almacenar la página actual-->
+<!--            const popupContent = document.getElementById('popup-content');-->
+<!--            popupContent.innerHTML = `-->
+<!--                <button onclick="navigateTo('video${page}')">-->
+<!--                    <img src="static/video.png" alt="Ver Video"> &lt;!&ndash; Cambia la URL de la imagen &ndash;&gt;-->
+<!--                    <span>Ver Video</span>-->
+<!--                </button>-->
+<!--                <button onclick="navigateTo('music${page}')">-->
+<!--                    <img src="static/musica.png" alt="Escuchar Música"> &lt;!&ndash; Cambia la URL de la imagen &ndash;&gt;-->
+<!--                    <span>Escuchar Música</span>-->
+<!--                </button>-->
+<!--            `; // Llenar el contenido del menú emergente-->
+<!--            document.getElementById('popup').style.display = 'block'; // Muestra el menú emergente-->
+<!--        }-->
 
-        function closePopup() {
-            document.getElementById('popup').style.display = 'none'; // Oculta el menú emergente
-        }
+<!--        function closePopup() {-->
+<!--            document.getElementById('popup').style.display = 'none'; // Oculta el menú emergente-->
+<!--        }-->
 
-        function navigateTo(page) {
-            window.location.href = page; // Navega a la página seleccionada
-        }
-    </script>
-</body>
-</html>
+<!--        function navigateTo(page) {-->
+<!--            window.location.href = page; // Navega a la página seleccionada-->
+<!--        }-->
+<!--    </script>-->
+<!--</body>-->
+<!--</html>-->
+
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="es">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Emoticonos</title>-->
+<!--    <style>-->
+<!--        html, body {-->
+<!--            height: 100%;-->
+<!--            margin: 0;-->
+<!--            padding: 0;-->
+<!--            font-family: Arial, sans-serif;-->
+<!--            background-color: #f0f0f0;-->
+<!--            display: flex;-->
+<!--            align-items: center;-->
+<!--            justify-content: center;-->
+<!--            text-align: center;-->
+<!--        }-->
+<!--        .container {-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--            align-items: center;-->
+<!--            width: 90vw; /* Ajusta el ancho del contenedor al 90% del ancho de la pantalla */-->
+<!--        }-->
+<!--        .question {-->
+<!--            margin: 1vw 0;-->
+<!--            font-size: 2.5vw; /* Ajusta el tamaño del texto de la pregunta al 2.5% del ancho de la pantalla */-->
+<!--            color: #333;-->
+<!--        }-->
+<!--        .emoticons {-->
+<!--            display: flex;-->
+<!--            justify-content: center;-->
+<!--            gap: 2vw; /* Ajusta el espacio entre los emoticonos al 2% del ancho de la pantalla */-->
+<!--            margin-top: 2vw;-->
+<!--        }-->
+<!--        .emoticon {-->
+<!--            width: 20vw; /* Ajusta el tamaño de las imágenes al 20% del ancho de la pantalla */-->
+<!--            max-width: 200px; /* Limita el tamaño máximo de las imágenes para evitar que sean demasiado grandes */-->
+<!--            height: auto; /* Mantiene la proporción de las imágenes */-->
+<!--            cursor: pointer;-->
+<!--            transition: transform 0.2s;-->
+<!--        }-->
+<!--        .emoticon:hover {-->
+<!--            transform: scale(1.1);-->
+<!--        }-->
+<!--        .thank-you {-->
+<!--            display: none; /* Oculta el mensaje de agradecimiento inicialmente */-->
+<!--            font-size: 6vw; /* Tamaño del texto de agradecimiento */-->
+<!--            color: #4CAF50; /* Color verde para el texto de agradecimiento */-->
+<!--            margin-top: 20px;-->
+<!--        }-->
+<!--        .hidden {-->
+<!--            display: none; /* Clase para ocultar elementos */-->
+<!--        }-->
+<!--        #aviso-inactividad {-->
+<!--            display: none;-->
+<!--            position: fixed;-->
+<!--            top: 0;-->
+<!--            left: 0;-->
+<!--            width: 100%;-->
+<!--            height: 100%;-->
+<!--            background-color: rgba(0, 0, 0, 0.8);-->
+<!--            color: white;-->
+<!--            font-size: 3vw;-->
+<!--            justify-content: center;-->
+<!--            align-items: center;-->
+<!--            flex-direction: column;-->
+<!--            text-align: center;-->
+<!--        }-->
+<!--        #aviso-inactividad button {-->
+<!--            font-size: 2vw;-->
+<!--            padding: 1vw 2vw;-->
+<!--            margin-top: 2vh;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <div class="container">-->
+<!--        <div class="question">¿Cómo te encuentras hoy?</div>-->
+<!--        <div class="emoticons">-->
+<!--            <img src="{{ url_for('static', filename='static/1.png') }}" alt="Triste" class="emoticon" data-value="triste">-->
+
+<!--            <img src="{{ url_for('static', filename='static/3.png') }}" alt="Neutral" class="emoticon" data-value="neutral">-->
+
+<!--            <img src="{{ url_for('static', filename='static/5.png') }}" alt="Muy Contento" class="emoticon" data-value="muy-contento">-->
+<!--        </div>-->
+<!--&lt;!&ndash;        <div class="thank-you">¡GRACIAS!</div> &lt;!&ndash; Mensaje de agradecimiento &ndash;&gt;&ndash;&gt;-->
+<!--    </div>-->
+
+<!--    <div id="aviso-inactividad" class="finalizado">-->
+<!--        <p>¿Sigues ahí?</p>-->
+<!--        <button id="seguir-aqui-btn">Sí, sigo aquí</button>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Elemento de audio &ndash;&gt;-->
+<!--&lt;!&ndash;    <# audio id="background-audio" src="static/valoracion/satisfaccion.mp3" preload="auto" autoplay></audio>&ndash;&gt;-->
+
+<!--    &lt;!&ndash; Elemento de audio para reproducir después de hacer clic &ndash;&gt;-->
+<!--&lt;!&ndash;    <# audio id="click-audio" src="static/valoracion/gracias.mp3" preload="auto"></audio>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    <# audio id="audio-aviso" src="{{ url_for('static', filename=carpeta_aud + '/aviso.mp3') }}"></audio>&ndash;&gt;-->
+
+<!--    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+<!--    <script>-->
+<!--        document.querySelectorAll('.emoticon').forEach(emoticon => {-->
+
+<!--            let tiempoInactividad = 0;-->
+<!--            let tiempoMaximoInactividad = 60 * 1000; // 30 segundos (segun Alice)-->
+<!--            let tiempoParaDespedida = 60 * 1000; // 30 segs adicional (segun Al)-->
+<!--            let inactividadAvisada = false;-->
+
+<!--            function reiniciarInactividad() {-->
+<!--                tiempoInactividad = 0;-->
+<!--                inactividadAvisada = false;-->
+<!--                $("#aviso-inactividad").hide();-->
+<!--                $("#audio-aviso")[0].pause();-->
+<!--                $("#audio-aviso")[0].currentTime = 0;-->
+<!--            }-->
+
+<!--            $(document).on('click', function() {-->
+<!--                reiniciarInactividad();-->
+<!--            });-->
+
+<!--            setInterval(function() {-->
+<!--                tiempoInactividad += 1000;-->
+
+<!--                if (tiempoInactividad >= tiempoMaximoInactividad && !inactividadAvisada) {-->
+<!--                    $("#audio-aviso")[0].play();-->
+<!--                    $("#aviso-inactividad").show();-->
+<!--                    inactividadAvisada = true;-->
+<!--                }-->
+
+<!--                if (tiempoInactividad >= (tiempoMaximoInactividad + tiempoParaDespedida)) {-->
+<!--                    // $("#audio-despedida")[0].play();-->
+<!--                    // Hacer una solicitud POST usando Fetch API-->
+<!--                    fetch('/obtener_info', {-->
+<!--                        method: 'POST',-->
+<!--                        headers: {-->
+<!--                            'Content-Type': 'application/json'-->
+<!--                        },-->
+<!--                            body: JSON.stringify({-->
+<!--                                satisfaccion: "None",-->
+<!--                                timeout: "Timeout"-->
+<!--                            })-->
+<!--                    })-->
+<!--                    .then(response => response.json())-->
+<!--                    .then(data => {-->
+<!--                        console.log("Respuesta del servidor:", data);-->
+<!--                    })-->
+<!--                    .catch(error => console.error("Error:", error));-->
+
+<!--                        $.post("/reset_index", function(data) {-->
+<!--                            console.log(data.message);-->
+<!--                            window.location.href = '{{ server_url }}/';-->
+<!--                        });-->
+<!--                    // setTimeout(function(){-->
+<!--                    //     $.post("/reset_index", function(data) {-->
+<!--                    //         console.log(data.message);-->
+<!--                    //         window.location.href = '{{ server_url }}/';-->
+<!--                    //     });-->
+<!--                    // }, 1000); // Espera 5 segundos tras la despedida para reiniciar el índice y redirigir-->
+<!--                }-->
+<!--            }, 1000);-->
+
+<!--            $("#seguir-aqui-btn").click(function() {-->
+<!--                reiniciarInactividad();-->
+<!--            });-->
+
+<!--            emoticon.addEventListener('click', function() {-->
+<!--                const value = this.getAttribute('data-value');-->
+<!--                console.log(`Emoticono seleccionado: ${value}`);-->
+
+<!--                // Ocultar emoticonos y pregunta, mostrar mensaje de agradecimiento-->
+<!--                document.querySelector('.question').style.display = 'none';-->
+<!--                document.querySelector('.emoticons').style.display = 'none';-->
+<!--                document.querySelector('.thank-you').style.display = 'block';-->
+
+<!--                // Reproducir el segundo audio al hacer clic-->
+<!--                const clickAudio = document.getElementById('click-audio');-->
+<!--                clickAudio.play();-->
+
+<!--                // Hacer una solicitud POST usando Fetch API-->
+<!--                fetch('/obtener_info', {-->
+<!--                    method: 'POST',-->
+<!--                    headers: {-->
+<!--                        'Content-Type': 'application/json'-->
+<!--                    },-->
+<!--                    body: JSON.stringify({-->
+<!--                                satisfaccion: value,-->
+<!--                                timeout: "No"-->
+<!--                            })-->
+<!--                })-->
+<!--                .then(response => response.json())-->
+<!--                .then(data => {-->
+<!--                    console.log("Respuesta del servidor:", data);-->
+<!--                })-->
+<!--                .catch(error => console.error("Error:", error));-->
+
+
+<!--                // Enviar la solicitud POST-->
+<!--                $.post("/reset_index", function(data) {-->
+<!--                    console.log(data.message);-->
+<!--                });-->
+
+<!--                // Esperar 5 segundos antes de redirigir-->
+<!--                setTimeout(() => {-->
+<!--                    const url = '{{ server_url }}/';-->
+<!--                    window.location.href = url;-->
+<!--                }, 3500); // 5000 milisegundos = 5 segundos-->
+<!--            });-->
+<!--        });-->
+<!--    </script>-->
+<!--</body>-->
+<!--</html>-->

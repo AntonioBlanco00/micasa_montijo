@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Te has levantado?</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: darkgreen;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+        }
+        .botones {
+            margin-top: 20px;
+        }
+        button {
+            padding: 20px 40px;
+            margin: 20px;
+            font-size: 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .si {
+            background-color: green;
+            color: white;
+        }
+        .no {
+            background-color: red;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>¿Te has levantado?</h1>
+    <img src="static/video.png" alt="Imagen de levantarse de la cama">
+    <audio id="audio2" autoplay>
+        <source src="static/song1.mp3" type="audio/mp3">
+        Tu navegador no soporta el audio.
+    </audio>
+    <audio id="audio3" src="static/song2.mp3"></audio> <!-- Mensaje posterior -->
+    <audio id="audio4" src="static/song3.mp3"></audio> <!-- Mensaje final -->
+    <div class="botones">
+        <button class="si" onclick="respuesta('si')">Sí</button>
+        <button class="no" onclick="respuesta('no')">No</button>
+    </div>
+    <script>
+        // Configuración de tiempos en milisegundos
+        const tiempoPrimeraEspera = 15000; // 15 segundos para detener el primer audio
+        const tiempoSegundaEspera = 30000; // 30 segundos para el tercer audio
+        const audio2 = document.getElementById("audio2"); // Primer audio
+        const audio3 = document.getElementById("audio3"); // Segundo audio
+        const audio4 = document.getElementById("audio4"); // Tercer audio
+        let temporizadorSegundaCancion; // Temporizador para el segundo audio
+        let temporizadorTercerAudio; // Temporizador para el tercer audio
+
+        // Función que maneja las respuestas de los botones
+        function respuesta(opcion) {
+            if (opcion === 'si') {
+                alert("¡Bien hecho! Ahora a empezar el día con energía.");
+                // Cancelar ambos temporizadores
+                clearTimeout(temporizadorSegundaCancion);
+                clearTimeout(temporizadorTercerAudio);
+                detenerAudios(); // Detener todos los audios
+            } else {
+                alert("Vamos, tú puedes. ¡Te enviaré otro recordatorio pronto!");
+                iniciarTemporizadorTercerAudio(); // Preparar el tercer audio
+            }
+        }
+
+        // Función para detener todos los audios
+        function detenerAudios() {
+            [audio2, audio3, audio4].forEach(audio => {
+                audio.pause();
+                audio.currentTime = 0;
+            });
+        }
+
+        // Función para iniciar el temporizador de la segunda canción
+        function iniciarTemporizadorSegundaCancion() {
+            temporizadorSegundaCancion = setTimeout(() => {
+                // Detener el primer audio
+                audio2.pause();
+                audio2.currentTime = 0;
+
+                // Reproducir el segundo audio
+                audio3.play()
+                    .then(() => {
+                        console.log("Audio de recordatorio reproducido.");
+                    })
+                    .catch((error) => {
+                        console.error("Error al reproducir el audio de recordatorio:", error);
+                    });
+
+                // Iniciar el temporizador para el tercer audio
+                iniciarTemporizadorTercerAudio();
+            }, tiempoPrimeraEspera);
+        }
+
+        // Función para iniciar el temporizador del tercer audio
+        function iniciarTemporizadorTercerAudio() {
+            temporizadorTercerAudio = setTimeout(() => {
+                // Detener el segundo audio
+                audio3.pause();
+                audio3.currentTime = 0;
+
+                // Reproducir el tercer audio
+                audio4.play()
+                    .then(() => {
+                        console.log("Tercer audio reproducido.");
+                    })
+                    .catch((error) => {
+                        console.error("Error al reproducir el tercer audio:", error);
+                    });
+            }, tiempoSegundaEspera);
+        }
+
+        // Iniciar el temporizador de la segunda canción automáticamente al cargar la página
+        iniciarTemporizadorSegundaCancion();
+    </script>
+</body>
+</html>
